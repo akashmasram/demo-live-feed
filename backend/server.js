@@ -7,6 +7,12 @@ const fs = require('fs');
 
 const app = express();
 app.use(cors());
+
+const hlsDirectory = path.join(__dirname, 'hls');
+if (!fs.existsSync(hlsDirectory)) {
+    fs.mkdirSync(hlsDirectory, { recursive: true });
+}
+
 app.use(express.static(path.join(__dirname, 'hls')));
 
 // RTSP URL for CP Plus E24A camera
