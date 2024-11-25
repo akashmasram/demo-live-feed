@@ -4,6 +4,7 @@ const cors = require('cors');
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 const app = express();
 app.use(cors());
@@ -46,6 +47,18 @@ const startStream = () => {
 // Endpoint to serve HLS stream
 app.get('/stream', (req, res) => {
     res.sendFile(hlsOutputPath);
+});
+
+
+
+app.get('/check-rtsp', (req, res) => {
+    exec(`ffmpeg -i ${rtspUrl} -t 5 -f null -`, (error, stdout, stderr) => {
+        if (error) {
+            res.status(500).send(`RTSP test failed: ${stderr}`);
+        } else {
+            res.send(`RTSP test succeeded: ${stdout}`);
+        }
+    });
 });
 
 // Start the stream when the server starts
